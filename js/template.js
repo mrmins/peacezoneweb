@@ -83,3 +83,8 @@ function sentInvite(contact, code, date) {
 function requested(id, email) {
   return '<tr> <td>' + email + '</td>  <td><input type="button" value="Accept" /> </td>  <td> <input class="btncancel" type="button" value="Reject" /> </td>  </tr>  '
 }
+
+function connectionItem(id, contact) {
+  return '<tr><td>' + contact + '</td><td> <a href="profile.html?id=' + id + '">Visit profile</a></td></tr>';
+
+}

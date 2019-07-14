@@ -61,6 +61,10 @@ $(function() {
         $('body').prepend( menu() );
         getSentInvites();
         $('body').addClass("gray-gradient");
+    } else if(  route.indexOf("/connections.html") !== -1) {
+        $('body').prepend( menu() );
+        getConnections();
+        $('body').addClass("gray-gradient");
     }
 
     $("#btnLogin").on("click", function() {
@@ -205,7 +209,6 @@ function getFeed() {
     $('#myfeed').empty();
     request(GET, MyFeed + "?token=" + getCookie('token'), null, function(data) {
         if(data.success) {
-            console.log(data);
             data.articles.forEach(item => {
                 $('#connectionsfeed').append( movieItem(item.id, item.title, item.description, item.username, 
                     item.category, item.creation_date, item.comments, item.upvotes, 
@@ -229,6 +232,22 @@ function getFeed() {
     });
 }
 
+function getConnectionArticles(id) {
+    $('#connectionsfeed').empty();
+    $('#myfeed').empty();
+    request(GET, ArticlesByUserID + "?token=" + getCookie('token') + "&id=" + id, null, function(data) {
+        if(data.success) {
+            data.articles.forEach(item => {
+                $('#myfeed').append( movieItem(item.id, item.title, item.description, item.username, 
+                    item.category, item.creation_date, item.comments, item.upvotes, 
+                    item.downvotes, item.own, item.upvotedbyme, item.downvotedbyme ) );
+            });
+
+        }
+    });
+}
+
+
 function getProfile() {
     var id = getURLParameter("id");
 
@@ -238,12 +257,15 @@ function getProfile() {
             $(".txt-ms").text(data.articles);
             $(".txt-c").text(data.connections);
             getFeed();
+            $(".txt-c").parent().attr("href", "connections.html");
         });
     } else {
         request(GET, UserByToken + "?token=" + getCookie('token') + "&id=" + id, null, function(data) {
             $(".username").text(data.username);
             $(".txt-ms").text(data.articles);
             $(".txt-c").text(data.connections);
+
+            getConnectionArticles( getURLParameter('id') );
         });
     }
 }
@@ -415,3 +437,11 @@ function voteC(id, vote, img, counter, relatedImg, relatedText) {
     
 }
 
+function getConnections() {
+    $('#connection-place').empty();
+    request(GET, Connections + "?token=" + getCookie('token'), null, function(data) {
+        data.users.forEach(item => {
+            $('#connection-place').append(  connectionItem(item.id, item.username) );
+        });
+    });
+}
